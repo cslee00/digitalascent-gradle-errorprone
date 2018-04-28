@@ -13,12 +13,12 @@ dependencies {
     compile "net.ltgt.gradle:gradle-errorprone-plugin:0.0.13"
 }
 
-version = "0.1"
+version = "0.2"
 group = "com.digitalascent"
 
 pluginBundle {
-    website = 'http://www.gradle.org/'
-    vcsUrl = 'https://github.com/gradle/gradle'
+    website = 'https://github.com/cslee00/digitalascent-gradle-errorprone'
+    vcsUrl = 'https://github.com/cslee00/digitalascent-gradle-errorprone'
     description = 'Applies default Google Error Prone configuration to all JavaCompile tasks'
     tags = ['java', 'errorprone']
 
