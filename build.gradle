@@ -1,0 +1,31 @@
+plugins {
+    id "java"
+    id 'com.gradle.plugin-publish' version '0.9.10'
+}
+
+repositories {
+    gradlePluginPortal()
+    jcenter()
+}
+
+dependencies {
+    compile gradleApi()
+    compile "net.ltgt.gradle:gradle-errorprone-plugin:0.0.13"
+}
+
+version = "0.1"
+group = "com.digitalascent"
+
+pluginBundle {
+    website = 'http://www.gradle.org/'
+    vcsUrl = 'https://github.com/gradle/gradle'
+    description = 'Applies default Google Error Prone configuration to all JavaCompile tasks'
+    tags = ['java', 'errorprone']
+
+    plugins {
+        errorPronePlugin {
+            id = 'com.digitalascent.gradle.errorprone'
+            displayName = 'Default configuration for Google Error Prone'
+        }
+    }
+}
