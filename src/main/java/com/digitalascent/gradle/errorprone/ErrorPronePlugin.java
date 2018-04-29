@@ -10,8 +10,6 @@ import org.gradle.api.plugins.JavaPlugin;
 import org.gradle.api.tasks.TaskCollection;
 import org.gradle.api.tasks.compile.CompileOptions;
 import org.gradle.api.tasks.compile.JavaCompile;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +17,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 public class ErrorPronePlugin implements Plugin<Project> {
-    private final Logger logger = LoggerFactory.getLogger(getClass());
 
     @Override
     public void apply(Project project) {
@@ -39,7 +36,7 @@ public class ErrorPronePlugin implements Plugin<Project> {
                 }
 
                 CompileOptions options = task.getOptions();
-                configureErrorProne(task, options, errorPronePluginExtension);
+                configureErrorProne(project, task, options, errorPronePluginExtension);
             };
             project.afterEvaluate(foo -> {
                 final TaskCollection<JavaCompile> javaCompileTasks = project.getTasks().withType(JavaCompile.class);
@@ -88,7 +85,7 @@ public class ErrorPronePlugin implements Plugin<Project> {
         errorPronePluginExtension.error("FunctionalInterfaceClash");
     }
 
-    private void configureErrorProne(JavaCompile task, CompileOptions options, ErrorPronePluginExtension errorPronePluginExtension) {
+    private void configureErrorProne(Project project, JavaCompile task, CompileOptions options, ErrorPronePluginExtension errorPronePluginExtension) {
         List<String> errorProneOptions = new ArrayList<>();
 
         // overrides
@@ -103,7 +100,7 @@ public class ErrorPronePlugin implements Plugin<Project> {
 
         errorPronePluginExtension.getExcludedPaths().forEach(excludedPath -> errorProneOptions.add("-XepExcludedPaths:" + excludedPath));
 
-        logger.info("Using error prone options for task {} : {}", task.getName(), errorProneOptions);
+        project.getLogger().lifecycle("Using error prone options for task {} : {}", task.getName(), errorProneOptions);
         options.getCompilerArgs().addAll( errorProneOptions );
 
     }
@@ -121,5 +118,10 @@ public class ErrorPronePlugin implements Plugin<Project> {
         Configuration errorProneConfiguration = getErrorProneConfiguration(project);
         String errorProneDependency = "com.google.errorprone:error_prone_core:2.3.1";
         errorProneConfiguration.getDependencies().add(project.getDependencies().create(errorProneDependency));
+        project.afterEvaluate(o -> {
+            errorProneConfiguration.getDependencies().forEach( dependency -> {
+                project.getLogger().lifecycle("Error prone dependency: {}", dependency);
+            });
+        });
     }
 }
